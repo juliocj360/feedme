@@ -34,6 +34,79 @@
 
   <!-- HOMEWORK BEGIN - Write your code here: -->
   <script language='javascript'>
+  const fetcher = (input) => {
+    const el = document.querySelector('.feed')
+    while (el.firstChild) {
+      el.removeChild(el.firstChild);
+    }
+    el.textContent = `Loading ${input} search results...`
+    console.log(input)
+    fetch('/feed/' + input)
+      .then((result) => result.json())
+      .then((result) => cardLoader(result.rss.channel[0].item))
+      .catch((error) => console.error(error))
+  }
+
+  const cardLoader = (array) => {
+    const el = document.querySelector('.feed')
+    while (el.firstChild) {
+      el.removeChild(el.firstChild);
+    }
+    array.map((tweet) => {
+      const cardBox = document.createElement('div')
+      cardBox.className = 'card'
+      el.appendChild(cardBox)
+
+      const closeButton = document.createElement('span')
+      closeButton.className = 'display-topright padding close'
+      closeButton.textContent = 'X'
+      cardBox.appendChild(closeButton)
+      closeButton.addEventListener('click', () => {
+        cardBox.style.display = 'none'
+      })
+
+      const author = document.createElement('p')
+      author.className = 'author'
+      author.textContent = tweet.title
+      cardBox.appendChild(author)
+
+      const media = document.createElement('p')
+      media.className = 'media'
+      cardBox.appendChild(media)
+
+      if (tweet.enclosure) {
+        tweet.enclosure.map((pic) => {
+          const image = document.createElement('img')
+          image.setAttribute('src', pic.$.url)
+          media.appendChild(image)
+        })
+      }
+
+      const description = document.createElement('p')
+      description.className = 'description'
+      description.innerHTML = tweet.description
+      cardBox.appendChild(description)
+
+      const date = document.createElement('p')
+      date.className = 'date'
+      date.textContent = tweet.pubDate
+      cardBox.appendChild(date)
+    })
+  }
+
+  const loader = () => {
+    const lookUp = document.querySelector('.query-form')
+    const inputVal = document.querySelector('.query')
+
+    fetcher(inputVal.value)
+
+    lookUp.addEventListener('submit', () => {
+      event.preventDefault()
+      fetcher(inputVal.value)
+    })
+  }
+
+  window.addEventListener('load', loader)
 
   </script>
   <style>
