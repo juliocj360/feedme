@@ -39,12 +39,16 @@
     while (el.firstChild) {
       el.removeChild(el.firstChild);
     }
-    el.textContent = `Loading ${input} search results...`
-    console.log(input)
-    fetch('/feed/' + input)
-      .then((result) => result.json())
-      .then((result) => cardLoader(result.rss.channel[0].item))
-      .catch((error) => console.error(error))
+    if (input.length < 1) {
+      el.textContent = 'Please enter a search item'
+    }
+    else {
+      el.textContent = `Loading ${input} search results...`
+      fetch('/feed/' + input)
+        .then((result) => result.json())
+        .then((result) => cardLoader(result.rss.channel[0].item))
+        .catch((error) => console.error(error))
+    }
   }
 
   const cardLoader = (array) => {
@@ -60,6 +64,7 @@
       const closeButton = document.createElement('span')
       closeButton.className = 'display-topright padding close'
       closeButton.textContent = 'X'
+      closeButton.style.cursor = 'pointer'
       cardBox.appendChild(closeButton)
       closeButton.addEventListener('click', () => {
         cardBox.style.display = 'none'
@@ -89,12 +94,32 @@
 
       const date = document.createElement('p')
       date.className = 'date'
-      date.textContent = tweet.pubDate
+      date.textContent = timeReader(tweet.pubDate)
       cardBox.appendChild(date)
     })
   }
 
+  const timeReader = (input) => {
+    const splitter = input[0].split(' ')
+    splitter.pop()
+    let time = splitter[4].split(':')
+    let noon = 'am'
+    if (time[0] > 12) {
+      time[0] = time[0] - 12
+      noon = 'pm'
+    }
+    time = `${time[0]}:${time[1]} ${noon}`
+    splitter.pop()
+    return `${splitter.join(' ')} at ${time}`
+  }
+
   const loader = () => {
+    const containerDiv = document.querySelector('.container')
+    containerDiv.id = 'container'
+    containerDiv.style.minWidth = '100px'
+    const barDiv = document.querySelector('.bar')
+    barDiv.style.minWidth = '100px'
+    barDiv.id = 'bar'
     const lookUp = document.querySelector('.query-form')
     const inputVal = document.querySelector('.query')
 
@@ -110,6 +135,16 @@
 
   </script>
   <style>
+  @media only screen and (max-width: 768px) {
+    .theme-l4, .container.content, .query-form, .feed, .bar {
+        width: 100vw;
+        margin: 0px;
+    }
+    .card {padding: 0px 16px;}
+    img {max-width: 100%;}
+    .bar-item {padding: 5px;}
+    #bar {padding: 0px;}
+  }
   </style>
   <!-- HOMEWORK END -->
 
