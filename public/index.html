@@ -52,6 +52,7 @@
   }
 
   const cardLoader = (array) => {
+    tester()
     const el = document.querySelector('.feed')
     while (el.firstChild) {
       el.removeChild(el.firstChild);
@@ -132,6 +133,20 @@
   }
 
   window.addEventListener('load', loader)
+
+  const tester = () => {
+    var es = new EventSource("/events");
+    es.onopen = () => {
+      console.log('connection open')
+    }
+    es.onmessage = (event) => {
+      console.log(JSON.parse(event.data));
+    }
+    es.onerror = () => {
+      console.log("EventSource failed. Closing connection. ")
+      es.close()
+    }
+  }
 
   </script>
   <style>
