@@ -24,6 +24,7 @@
   "homepage": "https://github.com/juliocj360/feedme#readme",
   "dependencies": {
     "body-parser": "^1.17.1",
+    "connect-sse": "^1.2.0",
     "express": "^4.15.2",
     "request": "^2.81.0",
     "xml2js": "^0.4.17"
