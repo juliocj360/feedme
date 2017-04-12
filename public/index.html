@@ -52,7 +52,6 @@
   }
 
   const cardLoader = (array) => {
-    tester()
     const el = document.querySelector('.feed')
     while (el.firstChild) {
       el.removeChild(el.firstChild);
@@ -98,6 +97,7 @@
       date.textContent = timeReader(tweet.pubDate)
       cardBox.appendChild(date)
     })
+    sseLoader()
   }
 
   const timeReader = (input) => {
@@ -121,11 +121,11 @@
     const barDiv = document.querySelector('.bar')
     barDiv.style.minWidth = '100px'
     barDiv.id = 'bar'
-    const lookUp = document.querySelector('.query-form')
-    const inputVal = document.querySelector('.query')
 
+    const inputVal = document.querySelector('.query')
     fetcher(inputVal.value)
 
+    const lookUp = document.querySelector('.query-form')
     lookUp.addEventListener('submit', () => {
       event.preventDefault()
       fetcher(inputVal.value)
@@ -134,13 +134,18 @@
 
   window.addEventListener('load', loader)
 
-  const tester = () => {
+  const sseLoader = () => {
     var es = new EventSource("/events");
     es.onopen = () => {
       console.log('connection open')
     }
     es.onmessage = (event) => {
-      console.log(JSON.parse(event.data));
+      let serverMessage = JSON.parse(event.data)
+      console.log(serverMessage);
+      if (serverMessage.newTweets) {
+        console.log('new tweets')
+        loader()
+      }
     }
     es.onerror = () => {
       console.log("EventSource failed. Closing connection. ")
