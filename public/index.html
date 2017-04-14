@@ -144,7 +144,7 @@
       console.log(serverMessage);
       if (serverMessage.newTweets) {
         console.log('new tweets')
-        loader()
+        fetcher(serverMessage.query)
       }
     }
     es.onerror = () => {
