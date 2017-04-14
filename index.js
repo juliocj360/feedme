@@ -45,7 +45,7 @@ app.get('/events', sse, function (req, res) {
         newResults = result.rss.channel[0].item
         console.log('new: ' + newResults[0].title[0])
         if (currentResults[0].title[0] !== newResults[0].title[0]) {
-          res.json({ "newTweets": true })
+          res.json({ "newTweets": true, "query": currentQuery })
         }
         else {
           res.json({ "newTweets": false })
